@@ -29,7 +29,7 @@
 import Foundation
 import Metal
 
-class Cube : Node{
+class Cube : ModelObject{
   init(device : MTLDevice){
     let A = VertexWithColor(x: -1.0, y:   1.0, z:   1.0, r:  1.0, g:  0.0, b:  0.0, a:  1.0)
     let B = VertexWithColor(x: -1.0, y:  -1.0, z:   1.0, r:  0.0, g:  1.0, b:  0.0, a:  1.0)
@@ -60,7 +60,7 @@ class Cube : Node{
     super.updateWithDelta(delta: delta)
       
     let secsPerMove: Float = 6.0
-    rotate[1] = sinf( Float(time) * 2.0 * Float(M_PI) / secsPerMove)
-    rotate[0] = sinf( Float(time) * 2.0 * Float(M_PI) / secsPerMove)
+    rotate[1] = sinf( Float(time) * 2.0 * Float(Float.pi) / secsPerMove)
+    rotate[0] = sinf( Float(time) * 2.0 * Float(Float.pi) / secsPerMove)
   }
 }

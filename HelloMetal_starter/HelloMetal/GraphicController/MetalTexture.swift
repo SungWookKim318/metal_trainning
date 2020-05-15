@@ -26,16 +26,8 @@
 /// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 /// THE SOFTWARE.
 
-import Foundation
 import Metal
 
-class Triangle : ModelObject{
-  init(device: MTLDevice)
-  {
-    let v0 = VertexWithColor(x: 0.0, y: 1.0, z: 0.0, r: 1.0, g: 0.0, b: 0.0, a: 1.0)
-    let v1 = VertexWithColor(x: -1.0, y: -1.0, z: 0, r: 0, g: 1 , b: 0, a: 1)
-    let v2 = VertexWithColor(x: 1.0, y: -1.0, z: 0.0, r: 0.0, g: 0.0, b: 1, a: 1)
-    
-    super.init(name: "Triagle", vertices: [v0,v1,v2], device: device)
-  }
+class MetalTexture {
+  
 }

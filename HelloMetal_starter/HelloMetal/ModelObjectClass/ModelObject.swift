@@ -30,7 +30,7 @@ import Foundation
 import Metal
 import QuartzCore
 
-class Node{
+class ModelObject{
   // Variables
   let defaultColor = MTLClearColor(red: 0.0, green: 104.0/255.0, blue: 5.0/255.0, alpha: 1.0)
   let device : MTLDevice
@@ -84,7 +84,7 @@ class Node{
     renderPassDescriptor.colorAttachments[0].storeAction = .store
 
     guard let commandBuffer = commandQueue.makeCommandBuffer() else { return false }
-    commandBuffer.addCompletedHandler({(_) in self.bufferProvider.avaliableResourcesSemaphore.signal()})
+    commandBuffer.addCompletedHandler( {(_) in self.bufferProvider.avaliableResourcesSemaphore.signal()} )
     guard let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) else { return false }
     renderEncoder.setRenderPipelineState(pipelineState)
     renderEncoder.setVertexBuffer(vertexBuffer, offset: 0, index: 0)
