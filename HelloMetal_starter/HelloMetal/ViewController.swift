@@ -57,7 +57,7 @@ class ViewController: UIViewController {
     metalLayer.frame = view.layer.frame
     view.layer.addSublayer(metalLayer)
     
-    objectToDraw = Cube(device: device)
+    objectToDraw = Cube(device: device, commandQueue)
     
     let defaultLibrary = device.makeDefaultLibrary()!
     let fragmentProgram = defaultLibrary.makeFunction(name: "basic_fragment")

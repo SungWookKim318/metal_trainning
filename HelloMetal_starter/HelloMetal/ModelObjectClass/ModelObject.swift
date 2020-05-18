@@ -47,6 +47,24 @@ class ModelObject{
   
   var bufferProvider: BufferProvider
   
+  var texture: MTLTexture?
+  lazy var samplerState: MTLSamplerState? = ModelObject.defaultSampler(device: self.device)
+//MARK: Texture Sampler
+  class func defaultSampler(device: MTLDevice) -> MTLSamplerState? {
+    let sampler = MTLSamplerDescriptor()
+    sampler.minFilter             = MTLSamplerMinMagFilter.nearest
+    sampler.magFilter             = MTLSamplerMinMagFilter.nearest
+    sampler.mipFilter             = MTLSamplerMipFilter.nearest
+    sampler.maxAnisotropy         = 1
+    sampler.sAddressMode          = MTLSamplerAddressMode.clampToEdge
+    sampler.tAddressMode          = MTLSamplerAddressMode.clampToEdge
+    sampler.rAddressMode          = MTLSamplerAddressMode.clampToEdge
+    sampler.normalizedCoordinates = true
+    sampler.lodMinClamp           = 0
+    sampler.lodMaxClamp           = Float.greatestFiniteMagnitude
+    return device.makeSamplerState(descriptor: sampler)
+  }
+  
   // Functions
   init(name: String, vertices: Array<VertexWithColor>, device: MTLDevice) {
     var vertexData = Array<Float>()
@@ -62,6 +80,28 @@ class ModelObject{
     self.name = name
     self.device = device
     vertexCount = vertices.count
+    self.texture = nil
+    
+    self.bufferProvider = BufferProvider(device: device,
+                                         inflightBuffersCount: 3,
+                                         sizeOfUniformsBuffer: MemoryLayout<Float>.size * Matrix4.numberOfElements() * 2)
+  }
+  
+  init(name: String, vertices: Array<Vertex>, device: MTLDevice, texture: MTLTexture) {
+    var vertexData = Array<Float>()
+    for vertex in vertices{
+      vertexData += vertex.floatBuffer()
+    }
+    
+    let dataSize = vertexData.count * MemoryLayout.size(ofValue: vertexData[0])
+    
+    vertexBuffer = device.makeBuffer(bytes: vertexData, length: dataSize, options: [])
+    if vertexBuffer == nil { NSLog("vertexBuffer is nil, file to make MTLbuffer")  }
+    
+    self.name = name
+    self.device = device
+    vertexCount = vertices.count
+    self.texture = texture
     
     self.bufferProvider = BufferProvider(device: device,
                                          inflightBuffersCount: 3,
@@ -89,6 +129,10 @@ class ModelObject{
     renderEncoder.setRenderPipelineState(pipelineState)
     renderEncoder.setVertexBuffer(vertexBuffer, offset: 0, index: 0)
     renderEncoder.setCullMode(MTLCullMode.front)
+    renderEncoder.setFragmentTexture(texture, index: 0)
+    if let samplerState = samplerState{
+      renderEncoder.setFragmentSamplerState(samplerState, index: 0)
+    }
     
     //Uniform
     let modelMtx = self.GetModelMatrix()

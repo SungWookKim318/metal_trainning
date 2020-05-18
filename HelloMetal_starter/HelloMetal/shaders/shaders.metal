@@ -32,10 +32,12 @@ using namespace metal;
 struct VertexIn{
   packed_float3 pos;
   packed_float4 rgba;
+  packed_float2 st;
 };
 struct VertexOut{
   float4 pos [[position]];
   float4 rgba;
+  float2 st;
 };
 struct Uniforms
 {
@@ -55,10 +57,15 @@ vertex VertexOut basic_vertex( const device VertexIn* vertex_array [[ buffer(0) 
   VertexOut out;
   out.pos = p * m * float4(inVal.pos, 1);
   out.rgba = inVal.rgba;
+  out.st = inVal.st;
   
   return out;
 }
 
-fragment half4 basic_fragment(VertexOut outVal [[stage_in]]) {  //1
-  return half4(outVal.rgba[0], outVal.rgba[1], outVal.rgba[2], outVal.rgba[3]); //2
+fragment float4 basic_fragment(VertexOut outVal [[stage_in]],
+                              texture2d<float> tex2D [[texture(0)]],
+                              sampler sampler2D[[sampler(0)]] ) {  //1
+  float4 rgba = tex2D.sample(sampler2D, outVal.st);
+  return rgba;
+  //return half4(outVal.rgba[0], outVal.rgba[1], outVal.rgba[2], outVal.rgba[3]); //2
 }
